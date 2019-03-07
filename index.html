@@ -18,10 +18,17 @@
             font-size: 62.5%;
         }
 
+        body{
+            display: flex;
+            padding: 2rem;
+        }
+
         .container{
             height: 20rem;
             width: 15rem;
+            margin-right: 2rem;
         }
+
 
         .card{
             position: relative;
@@ -78,6 +85,16 @@
             perspective: 1000;
         }
 
+        .flip_inner_tens{
+            position: relative;
+            width: 100%;
+            height: 50%;
+            transform-origin: bottom;
+            transition: all 2s;
+            transform-style: preserve-3d;
+            perspective: 1000;
+        }
+
 
         .flip_front{
             position: absolute;
@@ -96,6 +113,7 @@
             animation-name: example;
             animation-duration: 2s;
             animation-fill-mode:forwards;
+            
         }
 
         @keyframes example {
@@ -126,6 +144,28 @@
     <div class="container">
         <div class="card">
             <div class="card_upper">
+                <p id="card_upper_tens">1</p>
+            </div>
+            <div class="card_lower">
+                <p id="card_lower_tens">0</p>
+            </div>
+            <div class="card_flip">
+
+                    <div class="flip_inner_tens" id="flipcard_tens">
+                        <div class="flip_back">
+                            <p id="flip_back_tens">1</p>
+                        </div>
+                        <div class="flip_front">
+                            <p id="flip_front_tens">0</p>
+                        </div>
+                    </div>
+            </div>    
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card_upper">
                 <p id="card_upper">1</p>
             </div>
             <div class="card_lower">
@@ -133,7 +173,7 @@
             </div>
             <div class="card_flip">
 
-                    <div class="flip_inner">
+                    <div class="flip_inner" id="flipcard">
                         <div class="flip_back">
                             <p id="flip_back">1</p>
                         </div>
@@ -146,36 +186,60 @@
     </div>
     
     <script>
-        const flipcard = document.querySelector('.flip_inner')
 
+        const flipcard = document.querySelector('#flipcard')
+        const flipcard_tens = document.querySelector('#flipcard_tens')
 
-        const updateNumbers = ({current, next}) => {
+        const ones = function({current}){
             const card_upper = document.getElementById('card_upper')
             const flip_back = document.getElementById('flip_back')
             const card_lower = document.getElementById('card_lower')
             const flip_front = document.getElementById('flip_front')
-            
+            current = current === 0 ? 0 : current % 10
+            let next = current === 9 ? 0 : current + 1
+               
             card_lower.innerText = current
             flip_front.innerText = current
             card_upper.innerText = next
-            flip_back.innerText = next
+            flip_back.innerText =  next
         }
 
-        const update = ({current, next}) => {
+        const tens = function({current}){
+            const card_upper_tens = document.getElementById('card_upper_tens')
+            const flip_back_tens = document.getElementById('flip_back_tens')
+            const card_lower_tens = document.getElementById('card_lower_tens')
+            const flip_front_tens = document.getElementById('flip_front_tens')
+            
+            current = current === 0 ? 0 : current / 10
+            current = Math.floor(current)
+            let next = current === 5 ? 0 : current + 1
 
+            card_lower_tens.innerText = current
+            flip_front_tens.innerText = current
+            card_upper_tens.innerText = next
+            flip_back_tens.innerText =  next
+        }
+
+        const update = function ({current}){
+            
             if(parseInt(flip_front.innerText) !== current){
-                console.log(flip_front.innerText)
-                console.log(current)
                 flipcard.classList.add('flip')
             }
+            if(parseInt(flip_front_tens.innerText) !== Math.floor(current / 10)){
+                flipcard_tens.classList.add('flip')
+            }
+
             setTimeout(()=>{
+                console.log(current)
                 flipcard.classList.remove('flip')
-                updateNumbers({current, next})
-                current !== 60, update({current: next, next: current+1}), null
+                flipcard_tens.classList.remove('flip')
+                    ones({current}) 
+                    tens({current}) 
+                current !== 60 ? update({current: current + 1}) : update({current: 0})
             },2000)
         }
 
-        update({current: 0 , next: 1})
+        update({current: 0})
 
             
     </script>
