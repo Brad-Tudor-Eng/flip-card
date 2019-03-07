@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Card Flip</title>
+
+    <style>
+
+        *,*::after,*::before{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html{
+            font-size: 62.5%;
+        }
+
+        .container{
+            height: 20rem;
+            width: 15rem;
+        }
+
+        .card{
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }   
+
+        .card > *{
+            font-size: 10rem;
+            color: white;
+            text-align: center;
+        }
+
+        .card_upper{
+            position: relative;
+            display: block;
+            height: 50%;
+            background-color: grey;
+            overflow: hidden;
+        }
+
+        .card_upper > *{
+            transform: translateY(37%);
+        }
+
+        .card_lower{
+            position: relative;
+            display: block;
+            height: 50%;
+            background-color: grey;
+            overflow: hidden;
+        }
+
+        .card_lower > *{
+            transform: translateY(-50%);
+        }
+
+        .card_flip{
+            position: absolute;
+            bottom: 0%;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+
+        .flip_inner{
+            position: relative;
+            width: 100%;
+            height: 50%;
+            transform-origin: bottom;
+            transition: all 2s;
+            transform-style: preserve-3d;
+            perspective: 1000;
+        }
+
+
+        .flip_front{
+            position: absolute;
+            background-color: grey;
+            overflow: hidden;
+            backface-visibility: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flip_front > *{
+            transform: translateY(37%);
+        }
+
+        .flip{
+            animation-name: example;
+            animation-duration: 2s;
+            animation-fill-mode:forwards;
+        }
+
+        @keyframes example {
+            from {transform: rotateX(0deg)}
+            to {transform: rotateX(180deg)}
+        }
+
+        .flip_back{
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: grey;
+            overflow: hidden;
+            backface-visibility: hidden;
+            height: 100%;
+            width: 100%;
+            transform: rotateX(180deg);
+        }
+
+        .flip_back > * {
+            transform: translateY(-50%);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="card_upper">
+                <p id="card_upper">1</p>
+            </div>
+            <div class="card_lower">
+                <p id="card_lower">0</p>
+            </div>
+            <div class="card_flip">
+
+                    <div class="flip_inner">
+                        <div class="flip_back">
+                            <p id="flip_back">1</p>
+                        </div>
+                        <div class="flip_front">
+                            <p id="flip_front">0</p>
+                        </div>
+                    </div>
+            </div>    
+        </div>
+    </div>
+    
+    <script>
+        const flipcard = document.querySelector('.flip_inner')
+
+
+        const updateNumbers = ({current, next}) => {
+            const card_upper = document.getElementById('card_upper')
+            const flip_back = document.getElementById('flip_back')
+            const card_lower = document.getElementById('card_lower')
+            const flip_front = document.getElementById('flip_front')
+            
+            card_lower.innerText = current
+            flip_front.innerText = current
+            card_upper.innerText = next
+            flip_back.innerText = next
+        }
+
+        const update = ({current, next}) => {
+
+            if(parseInt(flip_front.innerText) !== current){
+                console.log(flip_front.innerText)
+                console.log(current)
+                flipcard.classList.add('flip')
+            }
+            setTimeout(()=>{
+                flipcard.classList.remove('flip')
+                updateNumbers({current, next})
+                current !== 60, update({current: next, next: current+1}), null
+            },2000)
+        }
+
+        update({current: 0 , next: 1})
+
+            
+    </script>
+</body>
+</html>
